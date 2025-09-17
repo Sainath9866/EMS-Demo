@@ -67,11 +67,11 @@ export interface CalendarEvent {
 
 export const mockEmployee: Employee = {
   id: '1',
-  name: 'John Smith',
+  name: 'Jackie Chan',
   role: 'Senior Software Engineer',
   department: 'Engineering',
-  email: 'john.smith@company.com',
-  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face',
+  email: 'jackie.chan@company.com',
+  avatar: '/jackie.png',
   joinDate: '2022-01-15'
 };
 
