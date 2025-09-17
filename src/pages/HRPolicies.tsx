@@ -1,4 +1,4 @@
-import { Shield, FileText, Download, Calendar as CalendarIcon } from 'lucide-react'
+import { Shield, FileText, Download, Calendar } from 'lucide-react'
 
 export default function HRPolicies() {
   const policies = [

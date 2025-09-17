@@ -1,4 +1,4 @@
-import { FileText, Download, Calendar as CalendarIcon, DollarSign } from 'lucide-react'
+import { FileText, Download } from 'lucide-react'
 import { mockPaySlips } from '../data/mockData'
 
 export default function PaySlip() {

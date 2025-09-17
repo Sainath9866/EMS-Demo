@@ -1,8 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { 
-  Clock, 
-  TrendingUp, 
-  Calendar as CalendarIcon, 
   AlertCircle, 
   Camera, 
   MapPin, 
@@ -12,20 +9,15 @@ import {
   Shield,
   User,
   LogIn,
-  LogOut,
-  Video,
-  VideoOff
+  LogOut
 } from 'lucide-react'
-import { mockAttendanceData } from '../data/mockData'
 
 export default function Attendance() {
-  const [isPunchingIn, setIsPunchingIn] = useState(false)
-  const [isPunchingOut, setIsPunchingOut] = useState(false)
   const [isScanning, setIsScanning] = useState(false)
   const [scanSuccess, setScanSuccess] = useState(false)
   const [currentStatus, setCurrentStatus] = useState<'checked-in' | 'checked-out' | null>('checked-out')
-  const [geofenceStatus, setGeofenceStatus] = useState<'in-office' | 'out-of-office'>('in-office')
-  const [wifiStatus, setWifiStatus] = useState<'connected' | 'disconnected'>('connected')
+  const [geofenceStatus] = useState<'in-office' | 'out-of-office'>('in-office')
+  const [wifiStatus] = useState<'connected' | 'disconnected'>('connected')
   const [cameraActive, setCameraActive] = useState(false)
   const [stream, setStream] = useState<MediaStream | null>(null)
   const [todayAttendance, setTodayAttendance] = useState({
@@ -168,7 +160,6 @@ export default function Attendance() {
               checkIn: timeString,
               checkOut: null 
             }))
-            setIsPunchingIn(false)
             console.log(`Punch In successful at ${timeString}`)
           } else {
             setCurrentStatus('checked-out')
@@ -176,7 +167,6 @@ export default function Attendance() {
               ...prev, 
               checkOut: timeString 
             }))
-            setIsPunchingOut(false)
             console.log(`Punch Out successful at ${timeString}`)
           }
           setScanSuccess(false)
@@ -320,7 +310,6 @@ export default function Attendance() {
             {currentStatus === 'checked-out' ? (
               <button
                 onClick={() => {
-                  setIsPunchingIn(true)
                   handleBiometricScan('punch-in')
                 }}
                 disabled={isScanning || geofenceStatus === 'out-of-office'}
@@ -334,7 +323,6 @@ export default function Attendance() {
             ) : (
               <button
                 onClick={() => {
-                  setIsPunchingOut(true)
                   handleBiometricScan('punch-out')
                 }}
                 disabled={isScanning}

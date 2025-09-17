@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import Chatbot from './Chatbot'
-import { cn } from '../lib/utils'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -11,7 +9,6 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const location = useLocation()
 
   return (
     <div className="min-h-screen bg-gray-50">
