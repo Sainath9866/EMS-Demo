@@ -18,7 +18,7 @@ const initialEmployees: Emp[] = [
 ]
 
 export default function Employees() {
-  const [employees, setEmployees] = useState<Emp[]>(initialEmployees)
+  const [employees] = useState<Emp[]>(initialEmployees)
   const [showAdd, setShowAdd] = useState(false)
 
   return (
