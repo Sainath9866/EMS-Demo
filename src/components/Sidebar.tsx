@@ -52,10 +52,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">L</span>
+              <span className="text-white font-bold text-sm">E</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">LOGZE</h1>
+              <h1 className="text-xl font-bold text-gray-900">EMS</h1>
               <p className="text-xs text-gray-500">Built for the Way You Work</p>
             </div>
           </div>
