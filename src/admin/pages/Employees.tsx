@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Edit, Eye, Power, Fingerprint } from 'lucide-react'
 
 interface Emp {
@@ -20,6 +21,7 @@ const initialEmployees: Emp[] = [
 export default function Employees() {
   const [employees] = useState<Emp[]>(initialEmployees)
   const [showAdd, setShowAdd] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <div className="space-y-6">
@@ -66,7 +68,12 @@ export default function Employees() {
                     <button className="px-2.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"><Eye className="h-4 w-4"/></button>
                     <button className="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 cursor-pointer"><Edit className="h-4 w-4"/></button>
                     <button className="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 cursor-pointer"><Power className="h-4 w-4"/></button>
-                    <button className={`px-2.5 py-1.5 rounded-lg ${emp.biometric ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700'} hover:opacity-90 cursor-pointer`}><Fingerprint className="h-4 w-4"/></button>
+                    <button
+                      onClick={() => { console.log('Navigate to biometric registration for', emp.id); navigate('/admin/biometric') }}
+                      className={`px-2.5 py-1.5 rounded-lg ${emp.biometric ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700'} hover:opacity-90 cursor-pointer`}
+                    >
+                      <Fingerprint className="h-4 w-4"/>
+                    </button>
                   </div>
                 </td>
               </tr>

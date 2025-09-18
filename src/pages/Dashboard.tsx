@@ -14,6 +14,7 @@ import {
   mockActivities
 } from '../data/mockData'
 import LeaveApplicationModal from '../components/LeaveApplicationModal'
+import Schedule from '../components/Schedule'
 
 export default function Dashboard() {
   const [showLeaveModal, setShowLeaveModal] = useState(false)
@@ -253,6 +254,11 @@ export default function Dashboard() {
             </button>
           </div>
 
+
+          {/* Schedule Section */}
+          <div className="animate-fade-in-up" style={{animationDelay: '0.65s'}}>
+            <Schedule />
+          </div>
 
           {/* Bottom Row - Pay Slips, Announcements, Calendar */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
