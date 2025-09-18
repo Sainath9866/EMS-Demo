@@ -1,5 +1,3 @@
-import React from 'react'
-
 type ScheduleItem = {
   id: string
   title: string
