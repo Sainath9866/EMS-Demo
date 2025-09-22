@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { X, Calendar as CalendarIcon, FileText } from 'lucide-react'
+import { useData } from '../contexts/DataContext'
 
 interface LeaveApplicationModalProps {
   onClose: () => void
 }
 
 export default function LeaveApplicationModal({ onClose }: LeaveApplicationModalProps) {
+  const { addLeaveRequest, addNotification } = useData()
   const [formData, setFormData] = useState({
     leaveType: '',
     startDate: '',
@@ -17,6 +19,24 @@ export default function LeaveApplicationModal({ onClose }: LeaveApplicationModal
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Format dates for display
+    const dates = formData.startDate === formData.endDate 
+      ? formData.startDate 
+      : `${formData.startDate} → ${formData.endDate}`
+    
+    // Add leave request
+    addLeaveRequest({
+      employee: 'Jackie Chan', // Demo: using current user
+      type: formData.leaveType.charAt(0).toUpperCase() + formData.leaveType.slice(1),
+      dates: dates,
+      reason: formData.reason,
+      status: 'pending'
+    })
+    
+    // Show success notification
+    addNotification('success', 'Leave Application Submitted', 'Your leave request has been submitted and is pending approval.')
+    
     console.log('Leave application submitted:', formData)
     onClose()
   }

@@ -10,19 +10,43 @@ import {
 } from 'lucide-react'
 import { 
   mockPaySlips, 
-  mockAnnouncements, 
   mockActivities
 } from '../data/mockData'
+import { useData } from '../contexts/DataContext'
 import LeaveApplicationModal from '../components/LeaveApplicationModal'
 import Schedule from '../components/Schedule'
 
 export default function Dashboard() {
+  const { announcements, addLoanRequest, addNotification } = useData()
   const [showLeaveModal, setShowLeaveModal] = useState(false)
   const [showFinancialModal, setShowFinancialModal] = useState(false)
   const [showDocumentModal, setShowDocumentModal] = useState(false)
+  const [financialForm, setFinancialForm] = useState({
+    type: 'Advance Salary',
+    amount: '',
+    reason: ''
+  })
 
   const handleDownloadPayslip = (payslipId: string) => {
     console.log('Downloading payslip:', payslipId)
+  }
+
+  const handleFinancialSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (financialForm.amount && financialForm.reason) {
+      addLoanRequest({
+        employee: 'Jackie Chan', // Demo: using current user
+        type: financialForm.type,
+        amount: parseInt(financialForm.amount),
+        status: 'pending'
+      })
+      
+      // Show success notification
+      addNotification('success', 'Financial Request Submitted', 'Your financial request has been submitted and is pending approval.')
+      
+      setFinancialForm({ type: 'Advance Salary', amount: '', reason: '' })
+      setShowFinancialModal(false)
+    }
   }
 
   return (
@@ -292,11 +316,16 @@ export default function Dashboard() {
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
               <h3 className="text-xl font-bold text-gray-900 mb-6">Announcements</h3>
               <div className="space-y-4">
-                {mockAnnouncements.slice(0, 1).map((announcement) => (
+                {announcements.slice(0, 1).map((announcement) => (
                   <div key={announcement.id} className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="px-3 py-1 bg-blue-500 text-white text-xs font-medium rounded-full">Meeting</span>
-                      <span className="text-sm text-gray-500">14 Aug</span>
+                      <span className={`px-3 py-1 text-white text-xs font-medium rounded-full ${
+                        announcement.priority === 'high' ? 'bg-red-500' : 
+                        announcement.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                      }`}>
+                        {announcement.priority}
+                      </span>
+                      <span className="text-sm text-gray-500">{new Date(announcement.date).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                       <div className="flex items-center space-x-1">
@@ -305,10 +334,10 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center space-x-1">
                         <AlertCircle className="h-4 w-4" />
-                        <span>Sales floor</span>
+                        <span>{announcement.author}</span>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-700 mb-4">{announcement.content}</p>
+                    <p className="text-sm text-gray-700 mb-4">{announcement.body}</p>
                     <div className="flex items-center space-x-2">
                       <div className="flex -space-x-2">
                         {[1,2,3,4].map((i) => (
@@ -341,8 +370,8 @@ export default function Dashboard() {
                 <h4 className="text-lg font-semibold text-gray-900">August 2025</h4>
               </div>
               <div className="grid grid-cols-7 gap-1 mb-4">
-                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day) => (
-                  <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => (
+                  <div key={`${day}-${index}`} className="text-center text-sm font-medium text-gray-500 py-2">
                     {day}
                   </div>
                 ))}
@@ -429,15 +458,20 @@ export default function Dashboard() {
                 </button>
               </div>
               
-              <form className="space-y-6">
+              <form onSubmit={handleFinancialSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Request Type
                   </label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors cursor-pointer">
-                    <option>Advance Salary</option>
-                    <option>Reimbursement</option>
-                    <option>Loan Request</option>
+                  <select 
+                    value={financialForm.type}
+                    onChange={(e) => setFinancialForm({...financialForm, type: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors cursor-pointer"
+                  >
+                    <option value="Advance Salary">Advance Salary</option>
+                    <option value="Personal Loan">Personal Loan</option>
+                    <option value="Emergency Loan">Emergency Loan</option>
+                    <option value="Home Loan">Home Loan</option>
                   </select>
                 </div>
                 
@@ -447,8 +481,11 @@ export default function Dashboard() {
                   </label>
                   <input
                     type="number"
+                    value={financialForm.amount}
+                    onChange={(e) => setFinancialForm({...financialForm, amount: e.target.value})}
                     placeholder="Enter amount"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors cursor-pointer"
+                    required
                   />
                 </div>
                 
@@ -457,9 +494,12 @@ export default function Dashboard() {
                     Reason
                   </label>
                   <textarea
+                    value={financialForm.reason}
+                    onChange={(e) => setFinancialForm({...financialForm, reason: e.target.value})}
                     placeholder="Describe the reason for your request"
                     rows={4}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-colors resize-none cursor-pointer"
+                    required
                   />
                 </div>
                 

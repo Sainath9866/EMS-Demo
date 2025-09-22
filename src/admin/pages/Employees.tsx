@@ -1,26 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Edit, Eye, Power, Fingerprint } from 'lucide-react'
-
-interface Emp {
-  id: string
-  name: string
-  department: string
-  role: string
-  status: 'active' | 'inactive'
-  avatar: string
-  biometric?: boolean
-}
-
-const initialEmployees: Emp[] = [
-  { id: 'EMP-1001', name: 'Jackie Chan', department: 'Engineering', role: 'Senior Engineer', status: 'active', avatar: '/jackie.png', biometric: false },
-  { id: 'EMP-1002', name: 'Sarah Johnson', department: 'Sales', role: 'Manager', status: 'active', avatar: 'https://i.pravatar.cc/64?img=5', biometric: true },
-  { id: 'EMP-1003', name: 'Mike Wilson', department: 'HR', role: 'Associate', status: 'inactive', avatar: 'https://i.pravatar.cc/64?img=15', biometric: false },
-]
+import { useData } from '../../contexts/DataContext'
 
 export default function Employees() {
-  const [employees] = useState<Emp[]>(initialEmployees)
+  const { employees, addEmployee } = useData()
   const [showAdd, setShowAdd] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    employeeId: '',
+    department: '',
+    role: '',
+    avatar: ''
+  })
   const navigate = useNavigate()
 
   return (
@@ -91,31 +83,76 @@ export default function Employees() {
               <h3 className="text-lg font-semibold text-gray-900">Add New Employee</h3>
               <button onClick={() => setShowAdd(false)} className="text-gray-500 hover:text-gray-700 cursor-pointer">✕</button>
             </div>
-            <form className="p-6 space-y-4" onSubmit={(e) => { e.preventDefault(); console.log('add employee'); setShowAdd(false) }}>
+            <form className="p-6 space-y-4" onSubmit={(e) => { 
+              e.preventDefault(); 
+              if (formData.name && formData.department && formData.role) {
+                addEmployee({
+                  name: formData.name,
+                  department: formData.department,
+                  role: formData.role,
+                  status: 'active',
+                  avatar: formData.avatar || 'https://i.pravatar.cc/64?img=' + Math.floor(Math.random() * 50),
+                  biometric: false
+                });
+                setFormData({ name: '', employeeId: '', department: '', role: '', avatar: '' });
+                setShowAdd(false);
+              }
+            }}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Name</label>
-                  <input className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Employee name"/>
+                  <input 
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    placeholder="Employee name"
+                    required
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Employee ID</label>
-                  <input className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="EMP-XXXX"/>
+                  <input 
+                    value={formData.employeeId}
+                    onChange={(e) => setFormData({...formData, employeeId: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    placeholder="EMP-XXXX"
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Department</label>
-                  <input className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Department"/>
+                  <input 
+                    value={formData.department}
+                    onChange={(e) => setFormData({...formData, department: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    placeholder="Department"
+                    required
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Role</label>
-                  <input className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Role"/>
+                  <input 
+                    value={formData.role}
+                    onChange={(e) => setFormData({...formData, role: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    placeholder="Role"
+                    required
+                  />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Profile Picture</label>
-                  <input type="file" className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Profile Picture URL</label>
+                  <input 
+                    value={formData.avatar}
+                    onChange={(e) => setFormData({...formData, avatar: e.target.value})}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    placeholder="https://example.com/avatar.jpg"
+                  />
                 </div>
               </div>
               <div className="flex items-center justify-end space-x-3 pt-2">
-                <button type="button" onClick={() => setShowAdd(false)} className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer">Cancel</button>
+                <button type="button" onClick={() => {
+                  setShowAdd(false);
+                  setFormData({ name: '', employeeId: '', department: '', role: '', avatar: '' });
+                }} className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 cursor-pointer">Cancel</button>
                 <button type="submit" className="px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 cursor-pointer">Save</button>
               </div>
             </form>

@@ -1,7 +1,8 @@
 import { Megaphone, AlertCircle, Calendar as CalendarIcon, User } from 'lucide-react'
-import { mockAnnouncements } from '../data/mockData'
+import { useData } from '../contexts/DataContext'
 
 export default function Announcements() {
+  const { announcements } = useData()
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
@@ -27,7 +28,7 @@ export default function Announcements() {
 
       {/* Announcements List */}
       <div className="space-y-6">
-        {mockAnnouncements.map((announcement) => (
+        {announcements.map((announcement) => (
           <div key={announcement.id} className="bg-white rounded-xl shadow-md border border-neutral-200 overflow-hidden">
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
@@ -55,7 +56,7 @@ export default function Announcements() {
               </div>
               
               <div className="prose max-w-none">
-                <p className="text-neutral-700 leading-relaxed">{announcement.content}</p>
+                <p className="text-neutral-700 leading-relaxed">{announcement.body}</p>
               </div>
             </div>
           </div>

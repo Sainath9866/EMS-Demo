@@ -1,6 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
 import Layout from './components/Layout'
+import { DataProvider } from './contexts/DataContext'
+import { NotificationProvider } from './contexts/NotificationContext'
+import NotificationToast from './components/NotificationToast'
 import AdminDashboard from './admin/pages/AdminDashboard'
 import AdminLayout from './admin/AdminLayout'
 import Employees from './admin/pages/Employees'
@@ -60,10 +63,15 @@ function AppRoutes() {
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <AppRoutes />
-    </Router>
+    <DataProvider>
+      <NotificationProvider>
+        <Router>
+          <ScrollToTop />
+          <AppRoutes />
+          <NotificationToast />
+        </Router>
+      </NotificationProvider>
+    </DataProvider>
   )
 }
 

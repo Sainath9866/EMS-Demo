@@ -1,18 +1,20 @@
-import { useState } from 'react'
 import { Check, X, FileText } from 'lucide-react'
-
-interface Leave { id: string; employee: string; type: string; dates: string; reason: string; status: 'pending'|'approved'|'rejected' }
-
-const seed: Leave[] = [
-  { id: 'L-101', employee: 'Sarah Johnson', type: 'Sick', dates: '2025-09-18 → 2025-09-20', reason: 'Flu', status: 'pending' },
-  { id: 'L-102', employee: 'Mike Wilson', type: 'Casual', dates: '2025-09-22', reason: 'Personal errand', status: 'pending' },
-]
+import { useData } from '../../contexts/DataContext'
 
 export default function AdminLeaves(){
-  const [rows, setRows] = useState<Leave[]>(seed)
+  const { leaveRequests, updateLeaveRequest, addNotification } = useData()
 
-  const setStatus = (id: string, status: Leave['status']) => {
-    setRows(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+  const setStatus = (id: string, status: 'pending'|'approved'|'rejected') => {
+    const request = leaveRequests.find(req => req.id === id)
+    updateLeaveRequest(id, { status, approvedBy: 'Admin' })
+    
+    // Show notification
+    if (status === 'approved') {
+      addNotification('success', 'Leave Approved', `Leave request for ${request?.employee} has been approved.`)
+    } else if (status === 'rejected') {
+      addNotification('warning', 'Leave Rejected', `Leave request for ${request?.employee} has been rejected.`)
+    }
+    
     console.log('Leave status changed:', id, status)
   }
 
@@ -33,7 +35,7 @@ export default function AdminLeaves(){
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {rows.map(r => (
+            {leaveRequests.map(r => (
               <tr key={r.id} className="hover:bg-gray-50">
                 <td className="px-6 py-3 text-sm text-gray-800">{r.id}</td>
                 <td className="px-6 py-3 text-sm text-gray-800">{r.employee}</td>

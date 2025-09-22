@@ -1,16 +1,22 @@
-import { useState } from 'react'
 import { DollarSign, Check, X, FileText } from 'lucide-react'
-
-interface Loan { id: string; employee: string; type: string; amount: number; status: 'pending'|'approved'|'rejected' }
-
-const seed: Loan[] = [
-  { id: 'FN-501', employee: 'Sarah Johnson', type: 'Advance Salary', amount: 35000, status: 'pending' },
-  { id: 'FN-502', employee: 'Mike Wilson', type: 'Loan', amount: 120000, status: 'pending' },
-]
+import { useData } from '../../contexts/DataContext'
 
 export default function AdminLoans(){
-  const [rows, setRows] = useState<Loan[]>(seed)
-  const setStatus = (id: string, status: Loan['status']) => { setRows(prev => prev.map(r => r.id===id?{...r,status}:r)); console.log('Loan status changed', id, status) }
+  const { loanRequests, updateLoanRequest, addNotification } = useData()
+  
+  const setStatus = (id: string, status: 'pending'|'approved'|'rejected') => { 
+    const request = loanRequests.find(req => req.id === id)
+    updateLoanRequest(id, { status, approvedBy: 'Admin' })
+    
+    // Show notification
+    if (status === 'approved') {
+      addNotification('success', 'Loan Approved', `Loan request for ${request?.employee} has been approved.`)
+    } else if (status === 'rejected') {
+      addNotification('warning', 'Loan Rejected', `Loan request for ${request?.employee} has been rejected.`)
+    }
+    
+    console.log('Loan status changed', id, status) 
+  }
 
   return (
     <div className="space-y-6">
@@ -28,7 +34,7 @@ export default function AdminLoans(){
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {rows.map(r => (
+            {loanRequests.map(r => (
               <tr key={r.id} className="hover:bg-gray-50">
                 <td className="px-6 py-3 text-sm text-gray-800">{r.id}</td>
                 <td className="px-6 py-3 text-sm text-gray-800">{r.employee}</td>
@@ -50,6 +56,9 @@ export default function AdminLoans(){
     </div>
   )
 }
+
+
+
 
 
 

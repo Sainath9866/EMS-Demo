@@ -1,57 +1,16 @@
 import { useState } from 'react'
 import { Calendar as CalendarIcon, Plus, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import { mockLeaveBalance } from '../data/mockData'
+import { useData } from '../contexts/DataContext'
 import LeaveApplicationModal from '../components/LeaveApplicationModal'
 
 export default function Leaves() {
+  const { leaveRequests } = useData()
   const [showLeaveModal, setShowLeaveModal] = useState(false)
 
-  const leaveApplications = [
-    {
-      id: '1',
-      type: 'Sick Leave',
-      startDate: '2024-12-10',
-      endDate: '2024-12-12',
-      days: 3,
-      reason: 'Fever and cold symptoms',
-      status: 'approved',
-      appliedDate: '2024-12-08',
-      approvedBy: 'Sarah Johnson'
-    },
-    {
-      id: '2',
-      type: 'Casual Leave',
-      startDate: '2024-11-28',
-      endDate: '2024-11-29',
-      days: 2,
-      reason: 'Personal work',
-      status: 'approved',
-      appliedDate: '2024-11-25',
-      approvedBy: 'Mike Wilson'
-    },
-    {
-      id: '3',
-      type: 'Earned Leave',
-      startDate: '2024-12-20',
-      endDate: '2024-12-25',
-      days: 6,
-      reason: 'Family vacation',
-      status: 'pending',
-      appliedDate: '2024-12-05',
-      approvedBy: ''
-    },
-    {
-      id: '4',
-      type: 'Casual Leave',
-      startDate: '2024-11-15',
-      endDate: '2024-11-15',
-      days: 1,
-      reason: 'Medical appointment',
-      status: 'rejected',
-      appliedDate: '2024-11-14',
-      approvedBy: 'Sarah Johnson'
-    }
-  ]
+  // Filter leave applications for current user (demo: using 'Jackie Chan' as current user)
+  const currentUser = 'Jackie Chan'
+  const userLeaveApplications = leaveRequests.filter(req => req.employee === currentUser)
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -188,16 +147,17 @@ export default function Leaves() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-neutral-200">
-              {leaveApplications.map((application) => (
+              {userLeaveApplications.map((application) => (
                 <tr key={application.id} className="hover:bg-neutral-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">
                     {application.type}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">
-                    {new Date(application.startDate).toLocaleDateString()} - {new Date(application.endDate).toLocaleDateString()}
+                    {application.dates}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">
-                    {application.days} days
+                    {application.dates.includes('→') ? 
+                      Math.ceil((new Date(application.dates.split(' → ')[1]).getTime() - new Date(application.dates.split(' → ')[0]).getTime()) / (1000 * 60 * 60 * 24)) + 1 : 1} days
                   </td>
                   <td className="px-6 py-4 text-sm text-neutral-900 max-w-xs truncate">
                     {application.reason}
